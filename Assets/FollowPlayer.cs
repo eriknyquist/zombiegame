@@ -15,9 +15,9 @@ public class FollowPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 cam_pos = gameObject.transform.position;
-        cam_pos.x = player.transform.position.x;
-        cam_pos.y = player.transform.position.y;
-        gameObject.transform.position = cam_pos;
+        Vector3 camPos = gameObject.transform.position;
+        camPos.x = player.transform.position.x;
+        camPos.y = player.transform.position.y;
+        gameObject.transform.position = camPos;
     }
 }

@@ -24,10 +24,10 @@ public class Zombie : MonoBehaviour
     Transform player;
     
     // Movement speed for IDLE state
-    const float SLOW_SPEED = 0.004f;
+    const float SLOW_SPEED = 0.008f;
     
     // Movement speeds for PURSUING and TRACKING states
-    const float FAST_SPEED = 0.02f;
+    const float FAST_SPEED = 0.04f;
     
     float zombieAngle;
     float turnStep;
@@ -35,6 +35,11 @@ public class Zombie : MonoBehaviour
     Vector2 lastSeenPlayerPos;
     RaycastHit2D playerHit;
     State state = State.IDLE;
+    
+    public void SetRotationAngle(float angle)
+    {
+        zombieAngle = angle;
+    }
     
     void Start()
     {
@@ -131,7 +136,7 @@ public class Zombie : MonoBehaviour
                 float targetAngle = AngleTowardsPosition(player.position);
                 float delta = Mathf.DeltaAngle(zombieAngle, targetAngle);
                 
-                if (Mathf.Abs(delta) < 5f)
+                if (Mathf.Abs(delta) < 10f)
                 {
                     state = State.PURSUING;
                     break;

@@ -6,17 +6,41 @@ public class ZombieSpawner : MonoBehaviour
 {
     public GameObject zombiePrefab;
     
-    float spawnDelay = 1f;
+    int maxZombiesToSpawn;
+    int spawned = 0;
     
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("SpawnZombie", 0, spawnDelay);
+        StartSpawning(200, 0.2f);
+    }
+    
+    void StartSpawning(int num, float delay)
+    {
+        spawned = 0;
+        maxZombiesToSpawn = num;
+        InvokeRepeating("SpawnZombie", 0, delay);
     }
 
+    void StopSpawning()
+    {
+        CancelInvoke("SpawnZombie");
+    }
+    
     void SpawnZombie()
     {
-        Instantiate(zombiePrefab, (Vector2) gameObject.transform.position, Quaternion.identity);
+        if (spawned == maxZombiesToSpawn)
+        {
+            StopSpawning();
+            return;
+        }
+        
+        GameObject spawnedZombie = Instantiate(zombiePrefab,
+                                               (Vector2) gameObject.transform.position,
+                                               Quaternion.identity);
+        Zombie zombie = spawnedZombie.GetComponent<Zombie>();                                 
+        zombie.SetRotationAngle(Random.Range(0, 360));
+        spawned += 1;
     }
     
     // Update is called once per frame
