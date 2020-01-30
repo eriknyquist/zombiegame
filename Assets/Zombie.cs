@@ -21,7 +21,7 @@ public class Zombie : MonoBehaviour
     public int hp = 2;
     
     // Reference to player gameobject
-    public Transform player;
+    Transform player;
     
     // Movement speed for IDLE state
     const float SLOW_SPEED = 0.004f;
@@ -35,6 +35,11 @@ public class Zombie : MonoBehaviour
     Vector2 lastSeenPlayerPos;
     RaycastHit2D playerHit;
     State state = State.IDLE;
+    
+    void Start()
+    {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+    }
     
     // Update is called once per frame
     void Update()
