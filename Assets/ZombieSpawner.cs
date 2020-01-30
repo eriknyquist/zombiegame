@@ -12,7 +12,7 @@ public class ZombieSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartSpawning(200, 0.2f);
+        StartSpawning(150, 0.2f);
     }
     
     void StartSpawning(int num, float delay)
