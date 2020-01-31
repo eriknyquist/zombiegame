@@ -35,14 +35,54 @@ public class Zombie : MonoBehaviour
     Vector2 lastSeenPlayerPos;
     RaycastHit2D playerHit;
     State state = State.IDLE;
+    ParticleSystem blood;
     
     public void SetRotationAngle(float angle)
     {
         zombieAngle = angle;
     }
     
+    public void BulletHit()
+    {
+        hp -= 1;
+        
+        EnableBlood();
+        Invoke("DisableBlood", 0.2f);
+        
+        if (0 == hp)
+        {
+            Death();
+        }
+    }
+    
+    void DestroyZombie()
+    {
+        Destroy(gameObject);
+    }
+    
+    void Death()
+    {
+        SpriteRenderer rend = gameObject.GetComponent<SpriteRenderer>();
+        BoxCollider2D bc = gameObject.GetComponent<BoxCollider2D>();
+        
+        rend.enabled = false;
+        Destroy(bc);
+        Invoke("DestroyZombie", 2f);
+    }
+    
+    void EnableBlood()
+    {
+        blood.enableEmission = true;
+    }
+    
+    void DisableBlood()
+    {
+        blood.enableEmission = false;
+    }
+    
     void Start()
     {
+        blood = gameObject.GetComponent<ParticleSystem>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
     

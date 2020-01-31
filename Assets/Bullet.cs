@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    ParticleSystem blood;
+    
     void OnCollisionEnter2D(Collision2D collision)
     {
         GameObject collided = collision.gameObject;
@@ -12,14 +14,7 @@ public class Bullet : MonoBehaviour
         // Did we hit a zombie?
         if (zombie != null)
         {
-            // Decrement zombies health
-            zombie.hp -= 1;
-            
-            if (zombie.hp == 0)
-            {
-                // Destroy zombie if its health is empty
-                Destroy(collided);
-            }
+            zombie.BulletHit();
         }
         
         Destroy(gameObject);
