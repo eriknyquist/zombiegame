@@ -64,7 +64,7 @@ public class Zombie : MonoBehaviour
     
     void Death()
     {
-        playerHUD.IncrementScore();
+        playerHUD.scoreBoard.IncrementScore();
         
         /* Disable rigidbody and boxcollider, so the zombie effectively disappears,
          * but the particle system will keep emitting */

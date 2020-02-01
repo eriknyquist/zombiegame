@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class AmmoCounter : MonoBehaviour
 {
-    int count = 0;
+    public int max_ammo = 50;
+    public int ammo;
     
     TextMesh textMesh;
     
@@ -15,11 +16,23 @@ public class AmmoCounter : MonoBehaviour
         MeshRenderer rend = gameObject.GetComponent<MeshRenderer>();
         rend.sortingOrder = 100;
         
-        SetAmmoCount(count);
+        Reload();
     }
     
-    public void SetAmmoCount(int count)
+    void DrawAmmoCount()
     {
-        textMesh.text = count.ToString();
+        textMesh.text = ammo.ToString();
+    }
+    
+    public void DecrementAmmo()
+    {
+        ammo -= 1;
+        DrawAmmoCount();
+    }
+    
+    public void Reload()
+    {
+        ammo = max_ammo;
+        DrawAmmoCount();
     }
 }

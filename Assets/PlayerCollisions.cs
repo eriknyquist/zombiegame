@@ -64,7 +64,7 @@ public class PlayerCollisions : MonoBehaviour
     {
         // Decrement player's health
         health -= 1;
-        playerHUD.SetHealth((float) health / (float) max_health);
+        playerHUD.healthBar.SetHealth((float) health / (float) max_health);
 
         if (health == 0)
         {

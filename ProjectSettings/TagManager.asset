@@ -8,6 +8,7 @@ TagManager:
   - LevelManager
   - HealthBar
   - PlayerHUD
+  - AmmoCounter
   layers:
   - Default
   - TransparentFX

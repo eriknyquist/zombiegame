@@ -7,9 +7,23 @@ public class Shooting : MonoBehaviour
     public Transform firePoint;
     public GameObject bulletPrefab;
     public float bulletForce = 20f;
+
+    PlayerHUD playerHUD;
+    
+    void Start()
+    {
+        GameObject hud = GameObject.FindGameObjectWithTag("PlayerHUD");
+        playerHUD = hud.GetComponent<PlayerHUD>();    
+    }
     
     void FireBullet()
     {
+        if (0 == playerHUD.ammoCounter.ammo)
+        {
+            return;
+        }
+        
+        playerHUD.ammoCounter.DecrementAmmo();
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         rb.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);
