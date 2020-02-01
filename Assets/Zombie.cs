@@ -29,6 +29,7 @@ public class Zombie : MonoBehaviour
     // Movement speeds for PURSUING and TRACKING states
     const float FAST_SPEED = 0.04f;
     
+    LevelManager levelManager;
     ScoreBoard scoreBoard;
     float zombieAngle;
     float turnStep;
@@ -75,6 +76,9 @@ public class Zombie : MonoBehaviour
         /* Destroy the gameobject, which will also destroy the particle system,
          * in 2 seconds */ 
         Invoke("DestroyZombie", 2f);
+        
+        // Inform LevelManager that a zombie was killed
+        levelManager.ZombieKilled();
     }
     
     void EnableBlood()
@@ -91,6 +95,10 @@ public class Zombie : MonoBehaviour
     {
         GameObject board = GameObject.FindGameObjectWithTag("ScoreBoard");
         scoreBoard = board.GetComponent<ScoreBoard>();
+
+        GameObject mgr = GameObject.FindGameObjectWithTag("LevelManager");
+        levelManager = mgr.GetComponent<LevelManager>();
+        
         blood = gameObject.GetComponent<ParticleSystem>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
