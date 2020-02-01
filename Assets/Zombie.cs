@@ -29,6 +29,7 @@ public class Zombie : MonoBehaviour
     // Movement speeds for PURSUING and TRACKING states
     const float FAST_SPEED = 0.04f;
     
+    ScoreBoard scoreBoard;
     float zombieAngle;
     float turnStep;
     Vector2 playerPos;
@@ -62,11 +63,17 @@ public class Zombie : MonoBehaviour
     
     void Death()
     {
+        scoreBoard.IncrementScore();
+        
+        /* Disable rigidbody and boxcollider, so the zombie effectively disappears,
+         * but the particle system will keep emitting */
         SpriteRenderer rend = gameObject.GetComponent<SpriteRenderer>();
         BoxCollider2D bc = gameObject.GetComponent<BoxCollider2D>();
-        
         rend.enabled = false;
         Destroy(bc);
+        
+        /* Destroy the gameobject, which will also destroy the particle system,
+         * in 2 seconds */ 
         Invoke("DestroyZombie", 2f);
     }
     
@@ -82,6 +89,8 @@ public class Zombie : MonoBehaviour
     
     void Start()
     {
+        GameObject board = GameObject.FindGameObjectWithTag("ScoreBoard");
+        scoreBoard = board.GetComponent<ScoreBoard>();
         blood = gameObject.GetComponent<ParticleSystem>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }

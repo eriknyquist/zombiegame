@@ -6,14 +6,15 @@ public class HealthBar : MonoBehaviour
 {
     GameObject player;
     Transform bar;
-    Vector3 offset;
+    
+    // Offset from player's position
+    Vector3 offset = new Vector3(0.0f, -3.8f, 0.0f);
     
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         bar = gameObject.transform.Find("Bar");
-        offset = gameObject.transform.position - player.transform.position;
     }
 
     void Update()
