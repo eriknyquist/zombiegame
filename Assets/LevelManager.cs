@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
+    // Delay in seconds between rounds
+    float roundDelaySecs = 2;
+    
     int level = 0;  // current level
     int kills = 0;  // number of kills so far in this level
     
@@ -44,7 +47,7 @@ public class LevelManager : MonoBehaviour
         // Was the last zombie killed?
         if ((int)LevelData[level][0] == kills)
         {
-            LevelUp();
+            Invoke("LevelUp", roundDelaySecs);
         }
     }
     
@@ -59,11 +62,5 @@ public class LevelManager : MonoBehaviour
         spawner2.StartSpawning(numZombies / 2, zombieDelay);
         
         kills = 0;
-    }
-    
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
