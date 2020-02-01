@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoreBoard : MonoBehaviour
+public class AmmoCounter : MonoBehaviour
 {
-    int score = 0;
+    int count = 0;
     
     TextMesh textMesh;
     
@@ -15,17 +15,11 @@ public class ScoreBoard : MonoBehaviour
         MeshRenderer rend = gameObject.GetComponent<MeshRenderer>();
         rend.sortingOrder = 100;
         
-        SetScore(score);
+        SetAmmoCount(count);
     }
     
-    public void IncrementScore()
+    public void SetAmmoCount(int count)
     {
-        score += 1;
-        SetScore(score);
-    }
-    
-    public void SetScore(int score)
-    {
-        textMesh.text = score.ToString();
+        textMesh.text = count.ToString();
     }
 }

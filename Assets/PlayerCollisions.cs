@@ -7,8 +7,8 @@ public class PlayerCollisions : MonoBehaviour
 {
     public int coolOffSeconds = 1;
     public float coolOffFlashDelay = 0.1f;
-    public GameObject healthBar;
     
+    PlayerHUD playerHUD;
     int max_health = 5;
     SpriteRenderer rend;
     int health;
@@ -20,6 +20,9 @@ public class PlayerCollisions : MonoBehaviour
     
     void Start()
     {
+        GameObject hud = GameObject.FindGameObjectWithTag("PlayerHUD");
+        playerHUD = hud.GetComponent<PlayerHUD>();
+        
         health = max_health;
         rend = gameObject.GetComponent<SpriteRenderer>();
     }
@@ -61,8 +64,7 @@ public class PlayerCollisions : MonoBehaviour
     {
         // Decrement player's health
         health -= 1;
-        HealthBar _healthBarScript = healthBar.GetComponent<HealthBar>();
-        _healthBarScript.setHealth((float) health / (float) max_health);
+        playerHUD.SetHealth((float) health / (float) max_health);
 
         if (health == 0)
         {

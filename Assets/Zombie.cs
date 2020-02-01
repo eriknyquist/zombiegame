@@ -30,7 +30,7 @@ public class Zombie : MonoBehaviour
     const float FAST_SPEED = 0.04f;
     
     LevelManager levelManager;
-    ScoreBoard scoreBoard;
+    PlayerHUD playerHUD;
     float zombieAngle;
     float turnStep;
     Vector2 playerPos;
@@ -64,7 +64,7 @@ public class Zombie : MonoBehaviour
     
     void Death()
     {
-        scoreBoard.IncrementScore();
+        playerHUD.IncrementScore();
         
         /* Disable rigidbody and boxcollider, so the zombie effectively disappears,
          * but the particle system will keep emitting */
@@ -93,8 +93,8 @@ public class Zombie : MonoBehaviour
     
     void Start()
     {
-        GameObject board = GameObject.FindGameObjectWithTag("ScoreBoard");
-        scoreBoard = board.GetComponent<ScoreBoard>();
+        GameObject hud = GameObject.FindGameObjectWithTag("PlayerHUD");
+        playerHUD = hud.GetComponent<PlayerHUD>();
 
         GameObject mgr = GameObject.FindGameObjectWithTag("LevelManager");
         levelManager = mgr.GetComponent<LevelManager>();

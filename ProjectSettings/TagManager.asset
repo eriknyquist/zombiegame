@@ -6,6 +6,8 @@ TagManager:
   tags:
   - ScoreBoard
   - LevelManager
+  - HealthBar
+  - PlayerHUD
   layers:
   - Default
   - TransparentFX
