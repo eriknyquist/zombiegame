@@ -6,6 +6,7 @@ ScriptsOnlyBuild:
     - FollowPlayer
     - HealthBar
     - LevelManager
+    - Pickup
     - PlayerCollisions
     - PlayerHUD
     - PlayerMovement
@@ -48,29 +49,31 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 9916}
+      Script: {instanceID: 9782}
     - Class: 114
-      Script: {instanceID: 10214}
+      Script: {instanceID: 9918}
     - Class: 114
-      Script: {instanceID: 10298}
+      Script: {instanceID: 10216}
     - Class: 114
-      Script: {instanceID: 10762}
+      Script: {instanceID: 10300}
     - Class: 114
-      Script: {instanceID: 10800}
+      Script: {instanceID: 10764}
     - Class: 114
-      Script: {instanceID: 10832}
+      Script: {instanceID: 10802}
     - Class: 114
-      Script: {instanceID: 10922}
+      Script: {instanceID: 10834}
     - Class: 114
-      Script: {instanceID: 11014}
+      Script: {instanceID: 10924}
     - Class: 114
-      Script: {instanceID: 11140}
+      Script: {instanceID: 11016}
     - Class: 114
       Script: {instanceID: 11142}
     - Class: 114
-      Script: {instanceID: 11254}
+      Script: {instanceID: 11144}
     - Class: 114
-      Script: {instanceID: 11508}
+      Script: {instanceID: 11256}
+    - Class: 114
+      Script: {instanceID: 11510}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 157
@@ -114,6 +117,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_ScrollbarEventHandler
+  - hash:
+      serializedVersion: 2
+      Hash: 13ed4c0323672c5d1fed9de1f3c33bb9
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Pickup
   - hash:
       serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
@@ -170,7 +179,7 @@ ScriptsOnlyBuild:
     className: TMP_InputField
   - hash:
       serializedVersion: 2
-      Hash: ec6e8a4ab7e0e813770cca47446a207c
+      Hash: 570c6126eee27b8902dec9f2f8bfe758
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: AmmoCounter
