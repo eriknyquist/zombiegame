@@ -9,7 +9,6 @@ public class Zombie : MonoBehaviour
     enum State
     {
         IDLE,       // Randomly milling about
-        CORRECTING, // Turning away from obstacle when randomly milling about
         TURNING,    // Turning to face player
         PURSUING,   // Following player with line of sight
         TRACKING    // Moving toward player's last seen position

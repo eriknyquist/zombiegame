@@ -22,6 +22,7 @@ ScriptsOnlyBuild:
     - UnityEditor.Tilemaps.TileDragAndDropManager
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
+    - UnityEditor.TestTools.TestRunner.TestListCacheData
   sceneClasses:
     Assets/Scenes/Level1.unity:
     - Class: 1
@@ -43,6 +44,10 @@ ScriptsOnlyBuild:
     - Class: 61
       Script: {instanceID: 0}
     - Class: 81
+      Script: {instanceID: 0}
+    - Class: 82
+      Script: {instanceID: 0}
+    - Class: 83
       Script: {instanceID: 0}
     - Class: 102
       Script: {instanceID: 0}
@@ -275,7 +280,7 @@ ScriptsOnlyBuild:
     className: ControlPlayableAsset
   - hash:
       serializedVersion: 2
-      Hash: 8a24ba66dba756735c6e46cb57ff443a
+      Hash: fd44807a6ed5404e633e4af94559faa3
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Shooting
@@ -353,7 +358,7 @@ ScriptsOnlyBuild:
     className: VerticalLayoutGroup
   - hash:
       serializedVersion: 2
-      Hash: 861ef3efc4becc5a293b61365f2a0135
+      Hash: 388d2357e919ce6c1d3d76bda3684460
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerCollisions

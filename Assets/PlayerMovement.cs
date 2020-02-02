@@ -20,6 +20,12 @@ public class PlayerMovement : MonoBehaviour
         
         // Read mouse cursor position
         mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+        
+        // Check if esc. was pressed
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
     
     void FixedUpdate()
