@@ -30,7 +30,7 @@ public class Zombie : MonoBehaviour
     const float FAST_SPEED = 0.04f;
     
     // Min. wall distance before zombie will turn away
-    const float WALL_BOUNDARY = 1f;
+    const float WALL_BOUNDARY = 1.5f;
     
     LevelManager levelManager;
     PlayerHUD playerHUD;
