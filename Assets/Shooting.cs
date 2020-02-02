@@ -7,11 +7,14 @@ public class Shooting : MonoBehaviour
     public Transform firePoint;
     public GameObject bulletPrefab;
     public float bulletForce = 20f;
+    public AudioClip gunSound;
 
+    AudioSource audioSource;
     PlayerHUD playerHUD;
     
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         GameObject hud = GameObject.FindGameObjectWithTag("PlayerHUD");
         playerHUD = hud.GetComponent<PlayerHUD>();    
     }
@@ -23,11 +26,12 @@ public class Shooting : MonoBehaviour
             return;
         }
         
+        audioSource.PlayOneShot(gunSound, 0.5f);
         playerHUD.ammoCounter.DecrementAmmo();
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         rb.AddForce(firePoint.up * bulletForce, ForceMode2D.Impulse);
-        Destroy(bullet, 2f);     
+        Destroy(bullet, 2f);
     }
     
     // Update is called once per frame

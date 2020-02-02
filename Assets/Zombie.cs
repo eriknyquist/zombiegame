@@ -8,10 +8,11 @@ public class Zombie : MonoBehaviour
     /* Enumeration of possible states a zombie can be in */
     enum State
     {
-        IDLE,     // Randomly milling about
-        TURNING,  // Turning to face player
-        PURSUING, // Following player with line of sight
-        TRACKING  // Moving toward player's last seen position
+        IDLE,       // Randomly milling about
+        CORRECTING, // Turning away from obstacle when randomly milling about
+        TURNING,    // Turning to face player
+        PURSUING,   // Following player with line of sight
+        TRACKING    // Moving toward player's last seen position
     }
     
     // Constant velocity damping value
@@ -28,6 +29,9 @@ public class Zombie : MonoBehaviour
     
     // Movement speeds for PURSUING and TRACKING states
     const float FAST_SPEED = 0.04f;
+    
+    // Min. wall distance before zombie will turn away
+    const float WALL_BOUNDARY = 1f;
     
     LevelManager levelManager;
     PlayerHUD playerHUD;
@@ -74,8 +78,8 @@ public class Zombie : MonoBehaviour
         Destroy(bc);
         
         /* Destroy the gameobject, which will also destroy the particle system,
-         * in 2 seconds */ 
-        Invoke("DestroyZombie", 2f);
+         * in 1 second */ 
+        Invoke("DestroyZombie", 1f);
         
         // Inform LevelManager that a zombie was killed
         levelManager.ZombieKilled();
@@ -89,6 +93,14 @@ public class Zombie : MonoBehaviour
     void DisableBlood()
     {
         blood.enableEmission = false;
+    }
+    
+    bool WallInFront()
+    {
+        // Cast out in front of zombie in direction of rotation
+        Vector3 castPos = gameObject.transform.position + gameObject.transform.right * WALL_BOUNDARY;
+        RaycastHit2D hit = Physics2D.Linecast(gameObject.transform.position, castPos);
+        return (bool) hit.transform;
     }
     
     void Start()
@@ -180,6 +192,13 @@ public class Zombie : MonoBehaviour
                 {
                     state = State.TURNING;
                     turnStep = Random.Range(5f, 10f);
+                    break;
+                }
+                
+                if (WallInFront())
+                {
+                    zombieAngle += 5f;
+                    gameObject.transform.rotation = Quaternion.Euler(0, 0, zombieAngle);
                     break;
                 }
                 

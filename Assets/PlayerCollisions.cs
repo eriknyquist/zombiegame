@@ -7,7 +7,10 @@ public class PlayerCollisions : MonoBehaviour
 {
     public int coolOffSeconds = 1;
     public float coolOffFlashDelay = 0.1f;
+    public AudioClip ammoPickupSound;
+    public AudioClip healthPickupSound;
     
+    AudioSource audioSource;
     GameObject player;
     PlayerHUD playerHUD;
     int maxHealth = 5;
@@ -21,6 +24,7 @@ public class PlayerCollisions : MonoBehaviour
     
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         player = GameObject.FindGameObjectWithTag("Player");
         GameObject hud = GameObject.FindGameObjectWithTag("PlayerHUD");
         playerHUD = hud.GetComponent<PlayerHUD>();
@@ -111,12 +115,14 @@ public class PlayerCollisions : MonoBehaviour
                 break;
 
             case "Ammo":
+                audioSource.PlayOneShot(ammoPickupSound, 0.5f);
                 playerHUD.ammoCounter.Reload();
                 pickup = collided.GetComponent<Pickup>();
                 pickup.PickedUp();
                 break;
 
             case "Health":
+                audioSource.PlayOneShot(healthPickupSound, 0.5f);
                 pickup = collided.GetComponent<Pickup>();
                 pickup.PickedUp();
                 SetMaxHealth();
