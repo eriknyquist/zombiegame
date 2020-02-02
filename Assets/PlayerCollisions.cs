@@ -9,6 +9,7 @@ public class PlayerCollisions : MonoBehaviour
     public float coolOffFlashDelay = 0.1f;
     public AudioClip ammoPickupSound;
     public AudioClip healthPickupSound;
+    public AudioClip playerHitSound;
     
     AudioSource audioSource;
     GameObject player;
@@ -71,6 +72,9 @@ public class PlayerCollisions : MonoBehaviour
         // Decrement player's health
         health -= 1;
         playerHUD.healthBar.SetHealth((float) health / (float) maxHealth);
+
+        // Play sound
+        audioSource.PlayOneShot(playerHitSound, 0.5f);
 
         if (health == 0)
         {

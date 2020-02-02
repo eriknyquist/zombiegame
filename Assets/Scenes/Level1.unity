@@ -295,6 +295,11 @@ PrefabInstance:
       propertyPath: healthPickupSound
       value: 
       objectReference: {fileID: 8300000, guid: f7a832f7062a2a34c8dbca51fa5831fc, type: 3}
+    - target: {fileID: 2491993152316216353, guid: 7343c374f93c3dd4fb556df1a083d6a1,
+        type: 3}
+      propertyPath: playerHitSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 0c62fbd3b1127ba42bd5b6a6d5ec0457, type: 3}
     - target: {fileID: 2491993152316216355, guid: 7343c374f93c3dd4fb556df1a083d6a1,
         type: 3}
       propertyPath: gunSound
