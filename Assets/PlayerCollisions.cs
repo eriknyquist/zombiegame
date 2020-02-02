@@ -8,8 +8,9 @@ public class PlayerCollisions : MonoBehaviour
     public int coolOffSeconds = 1;
     public float coolOffFlashDelay = 0.1f;
     
+    GameObject player;
     PlayerHUD playerHUD;
-    int max_health = 5;
+    int maxHealth = 5;
     SpriteRenderer rend;
     int health;
     bool coolingOff = false;
@@ -20,10 +21,11 @@ public class PlayerCollisions : MonoBehaviour
     
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
         GameObject hud = GameObject.FindGameObjectWithTag("PlayerHUD");
         playerHUD = hud.GetComponent<PlayerHUD>();
         
-        health = max_health;
+        health = maxHealth;
         rend = gameObject.GetComponent<SpriteRenderer>();
     }
     
@@ -64,7 +66,7 @@ public class PlayerCollisions : MonoBehaviour
     {
         // Decrement player's health
         health -= 1;
-        playerHUD.healthBar.SetHealth((float) health / (float) max_health);
+        playerHUD.healthBar.SetHealth((float) health / (float) maxHealth);
 
         if (health == 0)
         {
@@ -92,19 +94,39 @@ public class PlayerCollisions : MonoBehaviour
     
     void OnCollisionEnter2D(Collision2D collision)
     {
+        Pickup pickup;
         GameObject collided = collision.gameObject;
-        Zombie zombie = collided.GetComponent<Zombie>();
         
-        if (zombie != null)
+        switch (collided.tag)
         {
-            // The thing we collided with was a zombie
-            touching += 1;
+            case "Zombie":
+                Zombie zombie = collided.GetComponent<Zombie>();
+                touching += 1;
             
-            if (!coolingOff)
-            {
-                // Finished cooling off from last zombie hit
-                PlayerHitByZombie();
-            }
-        }        
+                if (!coolingOff)
+                {
+                    // Finished cooling off from last zombie hit
+                    PlayerHitByZombie();
+                }
+                break;
+
+            case "Ammo":
+                playerHUD.ammoCounter.Reload();
+                pickup = collided.GetComponent<Pickup>();
+                pickup.PickedUp();
+                break;
+
+            case "Health":
+                pickup = collided.GetComponent<Pickup>();
+                pickup.PickedUp();
+                SetMaxHealth();
+                break;
+        }    
+    }
+    
+    public void SetMaxHealth()
+    {
+        health = maxHealth;
+        playerHUD.healthBar.SetHealth(1f);
     }
 }

@@ -9,6 +9,9 @@ TagManager:
   - HealthBar
   - PlayerHUD
   - AmmoCounter
+  - Ammo
+  - Zombie
+  - Health
   layers:
   - Default
   - TransparentFX

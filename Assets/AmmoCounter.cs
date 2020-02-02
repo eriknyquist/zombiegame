@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AmmoCounter : MonoBehaviour
 {
-    public int max_ammo = 999;
+    public int maxAmmo = 20;
     public int ammo;
     
     TextMesh textMesh;
@@ -32,7 +32,7 @@ public class AmmoCounter : MonoBehaviour
     
     public void Reload()
     {
-        ammo = max_ammo;
+        ammo = maxAmmo;
         DrawAmmoCount();
     }
 }
