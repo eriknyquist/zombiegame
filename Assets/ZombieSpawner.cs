@@ -39,7 +39,7 @@ public class ZombieSpawner : MonoBehaviour
                                                (Vector2) gameObject.transform.position,
                                                Quaternion.identity);
         Zombie zombie = spawnedZombie.GetComponent<Zombie>();                                 
-        zombie.SetRotationAngle(Random.Range(0, 360));
+        zombie.SetRotationAngle(Random.Range(0f, 360f));
         spawned += 1;
     }
     

@@ -9,7 +9,6 @@ public class Zombie : MonoBehaviour
     enum State
     {
         IDLE,       // Randomly milling about
-        TURNING,    // Turning to face player
         PURSUING,   // Following player with line of sight
         TRACKING    // Moving toward player's last seen position
     }
@@ -30,12 +29,10 @@ public class Zombie : MonoBehaviour
     const float FAST_SPEED = 0.04f;
     
     // Min. wall distance before zombie will turn away
-    const float WALL_BOUNDARY = 1.5f;
+    const float WALL_BOUNDARY = 1f;
     
     LevelManager levelManager;
     PlayerHUD playerHUD;
-    float zombieAngle;
-    float turnStep;
     Vector2 playerPos;
     Vector2 lastSeenPlayerPos;
     RaycastHit2D playerHit;
@@ -44,7 +41,7 @@ public class Zombie : MonoBehaviour
     
     public void SetRotationAngle(float angle)
     {
-        zombieAngle = angle;
+        gameObject.transform.rotation = Quaternion.Euler(0, 0, angle);
     }
     
     public void BulletHit()
@@ -102,6 +99,48 @@ public class Zombie : MonoBehaviour
         return (bool) hit.transform;
     }
     
+    /* Do multiple raycasts in a 180 degree sweep in front of the zombie, and
+       calculate the rotation vector required to make the zombie look in the
+       direction of whichever raycast had the highest distance. Helps mitigate
+       zombies getting stuck on walls/corners (as opposed to just turning to a
+       random direction) */
+    Quaternion RaycastSweepForLookDirection()
+    {
+        // Total number of raycasts to do in the sweep
+        const int numCasts = 6;
+        
+        // Number of degrees to increment rotation by after each cast
+        float degreesIncrement = 180f / (float) numCasts;
+        
+        // Highest cast distance we've seen so far
+        float highestDistance = 0f;
+        
+        // Rotation angle offset corresponding with highest cast distance
+        float highestAngle = 0f;
+        
+        // Do a 180 degree sweep of raycasts
+        for (float angleOffset = 0f; angleOffset <= 180f; angleOffset += degreesIncrement)
+        {
+            // Calculate direction for this raycast
+            Vector3 castDir = Quaternion.Euler(0, 0, angleOffset) * (-transform.up);
+            
+            // Do the raycast
+            RaycastHit2D hit = Physics2D.Raycast(gameObject.transform.position, castDir);
+
+            // Draw a line showing the raycast, uncomment for debugging
+            Debug.DrawLine(gameObject.transform.position, hit.point, Color.green);
+            
+            if (hit.distance > highestDistance)
+            {
+                highestDistance = hit.distance;
+                highestAngle = angleOffset;
+            }
+        }
+
+        // Calculate angle of rotation to face direction of cast with the highest distance
+        return gameObject.transform.rotation * Quaternion.Euler(0, 0, -90f) * Quaternion.Euler(0, 0, highestAngle);
+    }
+    
     void Start()
     {
         GameObject hud = GameObject.FindGameObjectWithTag("PlayerHUD");
@@ -135,7 +174,9 @@ public class Zombie : MonoBehaviour
     // Rotate zombie to face given position
     void LookTowardsPosition(Vector2 pos)
     {
-        gameObject.transform.rotation = Quaternion.Euler(0, 0, AngleTowardsPosition(pos));
+        //gameObject.transform.rotation = Quaternion.Euler(0, 0, AngleTowardsPosition(pos));
+        Quaternion newRot = Quaternion.Euler(0, 0, AngleTowardsPosition(pos));
+        gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, newRot, 0.1f);
     }
     
     // Move zombie forwards in the direction of rotation
@@ -172,7 +213,7 @@ public class Zombie : MonoBehaviour
             case State.TRACKING:
                 if (haveLineOfSight)
                 {
-                    state = State.TURNING;
+                    state = State.PURSUING;
                     break;
                 }
                 
@@ -189,42 +230,14 @@ public class Zombie : MonoBehaviour
             case State.IDLE:
                 if (haveLineOfSight)
                 {
-                    state = State.TURNING;
-                    turnStep = Random.Range(5f, 10f);
-                    break;
-                }
-                
-                if (WallInFront())
-                {
-                    zombieAngle += 5f;
-                    gameObject.transform.rotation = Quaternion.Euler(0, 0, zombieAngle);
-                    break;
-                }
-                
-                // Turn zombie by some small random amount so it mills about randomly
-                zombieAngle += Random.Range(-1.0f, 1.0f);
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, zombieAngle);
-                MoveForwards(SLOW_SPEED);
-                break;
-            
-            case State.TURNING:
-                float targetAngle = AngleTowardsPosition(player.position);
-                float delta = Mathf.DeltaAngle(zombieAngle, targetAngle);
-                
-                if (Mathf.Abs(delta) < 10f)
-                {
                     state = State.PURSUING;
                     break;
                 }
                 
-                float step = turnStep;
-                if (delta < 0f)
-                {
-                    step *= -1f;
-                }
-                
-                zombieAngle += step;
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, zombieAngle);
+                gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation,
+                                                                RaycastSweepForLookDirection(),
+                                                                0.02f);
+                MoveForwards(SLOW_SPEED);
                 break;
         }
         
