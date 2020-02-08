@@ -31,6 +31,18 @@ public class Zombie : MonoBehaviour
     // Min. wall distance before zombie will turn away
     const float WALL_BOUNDARY = 1f;
     
+    /* We will do a raycast towards the player's position, to see if we have line-of-sight,
+     * every framesPerPlayerRaycast frames */
+    const int framesPerPlayerRaycast = 30;
+    
+    /* When in the idle state, we will do a 180 degree raycast sweep in front of
+     * the zombie to find the best direction to face every updatesPerRaycastSweep
+     physics updates */
+    const int updatesPerRaycastSweep = 30;
+    
+    int framesSinceLastCast;
+    int updatesSinceLastSweep;
+    BoxCollider2D boxCollider;
     LevelManager levelManager;
     PlayerHUD playerHUD;
     Vector2 playerPos;
@@ -38,6 +50,8 @@ public class Zombie : MonoBehaviour
     RaycastHit2D playerHit;
     State state = State.IDLE;
     ParticleSystem blood;
+    Quaternion idleLookDirection;
+    
     
     public void SetRotationAngle(float angle)
     {
@@ -69,9 +83,8 @@ public class Zombie : MonoBehaviour
         /* Disable rigidbody and boxcollider, so the zombie effectively disappears,
          * but the particle system will keep emitting */
         SpriteRenderer rend = gameObject.GetComponent<SpriteRenderer>();
-        BoxCollider2D bc = gameObject.GetComponent<BoxCollider2D>();
         rend.enabled = false;
-        Destroy(bc);
+        boxCollider.enabled = false;
         
         /* Destroy the gameobject, which will also destroy the particle system,
          * in 1 second */ 
@@ -91,14 +104,6 @@ public class Zombie : MonoBehaviour
         blood.enableEmission = false;
     }
     
-    bool WallInFront()
-    {
-        // Cast out in front of zombie in direction of rotation
-        Vector3 castPos = gameObject.transform.position + gameObject.transform.right * WALL_BOUNDARY;
-        RaycastHit2D hit = Physics2D.Linecast(gameObject.transform.position, castPos);
-        return (bool) hit.transform;
-    }
-    
     /* Do multiple raycasts in a 180 degree sweep in front of the zombie, and
        calculate the rotation vector required to make the zombie look in the
        direction of whichever raycast had the highest distance. Helps mitigate
@@ -106,6 +111,15 @@ public class Zombie : MonoBehaviour
        random direction) */
     Quaternion RaycastSweepForLookDirection()
     {
+        // Return cached copy, no need to do a raycast sweep on every physics update
+        if (updatesSinceLastSweep < updatesPerRaycastSweep)
+        {
+            updatesSinceLastSweep += 1;
+            return idleLookDirection;
+        }
+        
+        updatesSinceLastSweep = 0;
+        
         // Total number of raycasts to do in the sweep
         const int numCasts = 6;
         
@@ -117,6 +131,9 @@ public class Zombie : MonoBehaviour
         
         // Rotation angle offset corresponding with highest cast distance
         float highestAngle = 0f;
+        
+        // Temporarily disable boxcollider so we don't hit ourselves with the raycast
+        boxCollider.enabled = false;
         
         // Do a 180 degree sweep of raycasts
         for (float angleOffset = 0f; angleOffset <= 180f; angleOffset += degreesIncrement)
@@ -137,8 +154,25 @@ public class Zombie : MonoBehaviour
             }
         }
 
+        // Re-enable boxcollider
+        boxCollider.enabled = true;
+        
         // Calculate angle of rotation to face direction of cast with the highest distance
-        return gameObject.transform.rotation * Quaternion.Euler(0, 0, -90f) * Quaternion.Euler(0, 0, highestAngle);
+        idleLookDirection = gameObject.transform.rotation * Quaternion.Euler(0, 0, -90f) * Quaternion.Euler(0, 0, highestAngle);
+        return idleLookDirection;
+    }
+    
+    void UpdatePlayerLineCast()
+    {
+        if (framesSinceLastCast < framesPerPlayerRaycast)
+        {
+            framesSinceLastCast += 1;
+        }
+        else
+        {
+            playerHit = Physics2D.Linecast(gameObject.transform.position, playerPos);
+            framesSinceLastCast = 0;
+        }
     }
     
     void Start()
@@ -151,6 +185,11 @@ public class Zombie : MonoBehaviour
         
         blood = gameObject.GetComponent<ParticleSystem>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        
+        boxCollider = gameObject.GetComponent<BoxCollider2D>();
+        
+        updatesSinceLastSweep = 0;
+        framesSinceLastCast = 0;
     }
     
     // Update is called once per frame
@@ -159,8 +198,14 @@ public class Zombie : MonoBehaviour
         // Save player position
         playerPos = player.position;
         
-        // Save raycast towards player
-        playerHit = Physics2D.Linecast(gameObject.transform.position, playerPos);
+        // Temporarily disable boxcollider so we don't hit ourselves with the raycast
+        boxCollider.enabled = false;
+        
+        // Update raycast towards player
+        UpdatePlayerLineCast();
+        
+        // Re-enable boxcollider
+        boxCollider.enabled = true;
     }
     
     // Calculate angle of rotation required to make zombie look at given position

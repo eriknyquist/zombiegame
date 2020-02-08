@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -3220927684613150852}
   - component: {fileID: -3239311189843392139}
   - component: {fileID: -7900088678664590754}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Zombie
   m_TagString: Zombie
   m_Icon: {fileID: 0}
@@ -50,6 +50,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -4819,6 +4820,7 @@ ParticleSystemRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
