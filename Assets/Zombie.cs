@@ -6,11 +6,22 @@ using UnityEngine;
 public class Zombie : MonoBehaviour
 {
     /* Enumeration of possible states a zombie can be in */
-    enum State
+    public enum State
     {
-        IDLE,       // Randomly milling about
-        PURSUING,   // Following player with line of sight
-        TRACKING    // Moving toward player's last seen position
+        IDLE,             // Randomly milling about
+        PURSUING,         // Following player with line of sight
+        PURSUING_BLINDLY, // Following a zombie that has line-of-sight to the player
+        TRACKING_BLINDLY, // Following a zombie that is in the TRACKING state
+        TRACKING          // Moving toward player's last seen position
+    }
+    
+    
+    /* Enumeration of possible results from a linecast from zombie to player */
+    enum RaycastHitType
+    {
+        PLAYER_LOS,    // Zombie has line-of-sight to player
+        PURSUING_LOS,  // Line-of-sight to player is being blocked by a pursuing zombie
+        NO_LOS         // Can't see nuthin good
     }
     
     // Constant velocity damping value
@@ -18,6 +29,10 @@ public class Zombie : MonoBehaviour
     
     // Number of times a zombie can be shot before dying
     public int hp = 2;
+    
+    public State state = State.IDLE;
+    
+    public bool killed;
     
     // Reference to player gameobject
     Transform player;
@@ -42,17 +57,18 @@ public class Zombie : MonoBehaviour
     
     int framesSinceLastCast;
     int updatesSinceLastSweep;
-    bool killed;
     BoxCollider2D boxCollider;
     LevelManager levelManager;
     PlayerHUD playerHUD;
     Vector2 playerPos;
     Vector2 lastSeenPlayerPos;
     RaycastHit2D playerHit;
-    State state = State.IDLE;
     ParticleSystem blood;
     Quaternion idleLookDirection;
     
+    GameObject buddyZombie;
+    Zombie buddyZombieScript;
+    RaycastHitType hitType = RaycastHitType.NO_LOS;
     
     public void SetRotationAngle(float angle)
     {
@@ -163,7 +179,32 @@ public class Zombie : MonoBehaviour
         idleLookDirection = gameObject.transform.rotation * Quaternion.Euler(0, 0, -90f) * Quaternion.Euler(0, 0, highestAngle);
         return idleLookDirection;
     }
-    
+
+    RaycastHitType TranslatePlayerLineCast(RaycastHit2D hit)
+    {
+        if (!hit)
+        {
+            return RaycastHitType.NO_LOS;
+        }
+        
+        if ("Player" == hit.transform.gameObject.tag)
+        {
+            return RaycastHitType.PLAYER_LOS;
+        }
+        
+        if ("Zombie" == hit.transform.gameObject.tag)
+        {
+            buddyZombie = hit.transform.gameObject;
+            Zombie otherZombie = hit.transform.gameObject.GetComponent<Zombie>();
+            if ((State.PURSUING == otherZombie.state) || (State.PURSUING_BLINDLY == otherZombie.state))
+            {
+                return RaycastHitType.PURSUING_LOS;
+            }
+        }
+        
+        return RaycastHitType.NO_LOS;
+    }
+
     void UpdatePlayerLineCast()
     {
         if (framesSinceLastCast < framesPerPlayerRaycast)
@@ -173,6 +214,7 @@ public class Zombie : MonoBehaviour
         else
         {
             playerHit = Physics2D.Linecast(gameObject.transform.position, playerPos);
+            hitType = TranslatePlayerLineCast(playerHit);
             framesSinceLastCast = 0;
         }
     }
@@ -194,6 +236,7 @@ public class Zombie : MonoBehaviour
         framesSinceLastCast = 0;
         killed = false;
     }
+    
     
     // Update is called once per frame
     void Update()
@@ -239,7 +282,7 @@ public class Zombie : MonoBehaviour
     {
         gameObject.transform.position += gameObject.transform.right * speed;
     }
-    
+
     void FixedUpdate()
     {
         if (killed)
@@ -249,10 +292,7 @@ public class Zombie : MonoBehaviour
             return;
         }
         
-        // Do we have line-of-sight to the player?
-        bool haveLineOfSight = playerHit && ("Player" == playerHit.transform.name);
-        
-        if (haveLineOfSight)
+        if (RaycastHitType.PLAYER_LOS == hitType)
         {
             // Update the position where we last saw the player
             lastSeenPlayerPos = player.position;
@@ -261,7 +301,13 @@ public class Zombie : MonoBehaviour
         switch (state)
         {
             case State.PURSUING:
-                if (!haveLineOfSight)
+                if (RaycastHitType.PURSUING_LOS == hitType)
+                {
+                    state = State.PURSUING_BLINDLY;
+                    break;
+                }
+                
+                if (RaycastHitType.NO_LOS == hitType)
                 {
                     state = State.TRACKING;
                     break;
@@ -271,11 +317,59 @@ public class Zombie : MonoBehaviour
                 LookTowardsPosition(playerPos);
                 MoveForwards(FAST_SPEED);
                 break;
-                
-            case State.TRACKING:
-                if (haveLineOfSight)
+
+            case State.PURSUING_BLINDLY:
+                if (RaycastHitType.PLAYER_LOS == hitType)
                 {
                     state = State.PURSUING;
+                    break;
+                }
+                
+                if (RaycastHitType.NO_LOS == hitType)
+                {
+                    //state = State.IDLE;
+                    buddyZombieScript = buddyZombie.GetComponent<Zombie>();
+                    state = State.TRACKING_BLINDLY;
+                    break;
+                }
+                
+                // Turn zombie to face towards player
+                LookTowardsPosition(playerPos);
+                MoveForwards(FAST_SPEED);
+                break;
+
+            case State.TRACKING_BLINDLY:
+                if (buddyZombieScript.killed || (State.IDLE != buddyZombieScript.state))
+                {
+                    state = State.IDLE;
+                    break;
+                }
+
+                if (RaycastHitType.PLAYER_LOS == hitType)
+                {
+                    state = State.PURSUING;
+                    break;
+                }
+                
+                if (RaycastHitType.PURSUING_LOS == hitType)
+                {
+                    state = State.PURSUING_BLINDLY;
+                    break;
+                }
+                LookTowardsPosition(buddyZombie.transform.position);
+                MoveForwards(FAST_SPEED);
+                break;
+                
+            case State.TRACKING:
+                if (RaycastHitType.PLAYER_LOS == hitType)
+                {
+                    state = State.PURSUING;
+                    break;
+                }
+                
+                if (RaycastHitType.PURSUING_LOS == hitType)
+                {
+                    state = State.PURSUING_BLINDLY;
                     break;
                 }
                 
@@ -290,9 +384,15 @@ public class Zombie : MonoBehaviour
                 break;
                 
             case State.IDLE:
-                if (haveLineOfSight)
+                if (RaycastHitType.PLAYER_LOS == hitType)
                 {
                     state = State.PURSUING;
+                    break;
+                }
+                
+                if (RaycastHitType.PURSUING_LOS == hitType)
+                {
+                    state = State.PURSUING_BLINDLY;
                     break;
                 }
                 

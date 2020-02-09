@@ -468,7 +468,7 @@ ScriptsOnlyBuild:
     className: GraphicRaycaster
   - hash:
       serializedVersion: 2
-      Hash: b08b1e17651918da20aa25f76255909d
+      Hash: 28706fab123e05efd703915445d3a846
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Zombie
