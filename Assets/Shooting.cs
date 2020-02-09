@@ -36,14 +36,12 @@ public class Shooting : MonoBehaviour
     
     // Update is called once per frame
     void Update()
-    {
-        bool pressing = Input.GetButtonDown("Fire1");
-        
-        if (Input.GetButtonDown("Fire1"))
+    {        
+        if (Input.GetMouseButtonDown(0))
         {
             InvokeRepeating("FireBullet", 0, 0.1f);
         }
-        else if (Input.GetButtonUp("Fire1"))
+        else if (Input.GetMouseButtonUp(0))
         {
             CancelInvoke("FireBullet");
         }

@@ -21,14 +21,21 @@ public class Bullet : MonoBehaviour
         Zombie zombie = collided.GetComponent<Zombie>();
         
         // Did we hit a zombie?
-        if (zombie != null)
+        if (null!= zombie)
         {
             audioSource.PlayOneShot(zombieSound, 0.2f);
             zombie.BulletHit();
         }
         else
         {
-            audioSource.PlayOneShot(wallSound, 0.2f); 
+            audioSource.PlayOneShot(wallSound, 0.2f);
+            BuildableWall wall = collided.GetComponent<BuildableWall>();
+            
+            // Did we hit a buildable wall?
+            if (null != wall)
+            {
+                wall.BulletHit();
+            }
         }
         
         /* Disable rigidbody and boxcollider, so the bullet effectively disappears,
