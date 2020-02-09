@@ -14,12 +14,12 @@ public class LevelManager : MonoBehaviour
     object[][] LevelData = new object[][] {
         //            Total zombie    Delay between     Max. ammo
         //            spawns          zombie spawns
-        //new object[] {20,             0.5f,             20},
-        //new object[] {40,             0.5f,             20},
-        //new object[] {100,            0.2f,             50},
-        //new object[] {200,            0.2f,             50},
-        //new object[] {300,            0.2f,             100},
-        //new object[] {400,            0.2f,             100},
+        new object[] {20,             0.5f,             20},
+        new object[] {40,             0.5f,             20},
+        new object[] {100,            0.2f,             50},
+        new object[] {200,            0.2f,             50},
+        new object[] {300,            0.2f,             100},
+        new object[] {400,            0.2f,             100},
         new object[] {500,            0.2f,             200},
         new object[] {500,            0.1f,             200}
     };

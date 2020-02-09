@@ -42,6 +42,7 @@ public class Zombie : MonoBehaviour
     
     int framesSinceLastCast;
     int updatesSinceLastSweep;
+    bool killed;
     BoxCollider2D boxCollider;
     LevelManager levelManager;
     PlayerHUD playerHUD;
@@ -78,20 +79,21 @@ public class Zombie : MonoBehaviour
     
     void Death()
     {
+        killed = true;
         playerHUD.scoreBoard.IncrementScore();
         
         /* Disable rigidbody and boxcollider, so the zombie effectively disappears,
          * but the particle system will keep emitting */
         SpriteRenderer rend = gameObject.GetComponent<SpriteRenderer>();
         rend.enabled = false;
-        boxCollider.enabled = false;
+        Destroy(boxCollider);
+        
+        // Inform LevelManager that a zombie was killed
+        levelManager.ZombieKilled();
         
         /* Destroy the gameobject, which will also destroy the particle system,
          * in 1 second */ 
         Invoke("DestroyZombie", 1f);
-        
-        // Inform LevelManager that a zombie was killed
-        levelManager.ZombieKilled();
     }
     
     void EnableBlood()
@@ -190,11 +192,19 @@ public class Zombie : MonoBehaviour
         
         updatesSinceLastSweep = 0;
         framesSinceLastCast = 0;
+        killed = false;
     }
     
     // Update is called once per frame
     void Update()
     {
+        if (killed)
+        {
+            /* If zombie has been killed and we're just waiting for the gameobject
+             * to be destroyed, no need to do anything here */
+            return;
+        }
+        
         // Save player position
         playerPos = player.position;
         
@@ -231,7 +241,14 @@ public class Zombie : MonoBehaviour
     }
     
     void FixedUpdate()
-    {        
+    {
+        if (killed)
+        {
+            /* If zombie has been killed and we're just waiting for the gameobject
+             * to be destroyed, no need to do anything here */
+            return;
+        }
+        
         // Do we have line-of-sight to the player?
         bool haveLineOfSight = playerHit && ("Player" == playerHit.transform.name);
         

@@ -474,7 +474,7 @@ ScriptsOnlyBuild:
     className: Zombie
   - hash:
       serializedVersion: 2
-      Hash: cbd6fb454a03edd60e0a961b10e91a5c
+      Hash: 9172730832c220e6e30884c0c29552d0
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerHUD
