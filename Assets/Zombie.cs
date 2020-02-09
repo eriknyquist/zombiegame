@@ -339,7 +339,7 @@ public class Zombie : MonoBehaviour
                 break;
 
             case State.TRACKING_BLINDLY:
-                if (buddyZombieScript.killed || (State.IDLE != buddyZombieScript.state))
+                if (buddyZombieScript.killed || (State.IDLE == buddyZombieScript.state))
                 {
                     state = State.IDLE;
                     break;
